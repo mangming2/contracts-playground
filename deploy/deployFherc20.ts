@@ -6,18 +6,21 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy } = hre.deployments;
   const [signer] = await ethers.getSigners();
 
-  await fhenixjs.getFunds(signer.address);
-
-  const counter = await deploy("Counter", {
+  if (hre.network.name === "localfhenix") {
+    if (await signer.getBalance() < ethers.utils.parseEther("1.0")) {
+      await fhenixjs.getFunds(signer.address);
+    }
+  }
+  const counter = await deploy("FHERC20", {
     from: signer.address,
-    args: [],
+    args: ["token", "FHE"],
     log: true,
-    skipIfAlreadyDeployed: false,
+    skipIfAlreadyDeployed: true,
   });
 
-  console.log(`Counter contjract: `, counter.address);
+  console.log(`fherc20 contract: `, counter.address);
 };
 
 export default func;
-func.id = "deploy_counter";
-func.tags = ["Counter"];
+func.id = "deploy_fherc20";
+func.tags = ["FHERC20"];
