@@ -36,10 +36,11 @@ contract Voting is Permissioned {
         require(block.timestamp < voteEndTime, "voting is over!");
         require(!FHE.isInitialized(_votes[msg.sender]), "already voted!");
         euint8 encryptedVote = FHE.asEuint8(voteBytes); // Cast bytes into an encrypted type
-        _requireValid(encryptedVote);
+
+        ebool voteValid = _requireValid(encryptedVote);
 
         _votes[msg.sender] = encryptedVote;
-        _addToTally(encryptedVote /* , _one */);
+        _addToTally(encryptedVote, voteValid /* , _one */);
     }
 
     function finalize() public {
@@ -66,13 +67,13 @@ contract Voting is Permissioned {
         return FHE.sealoutput(_votes[msg.sender], signature.publicKey);
     }
 
-    function _requireValid(euint8 encryptedVote) internal view {
+    function _requireValid(euint8 encryptedVote) internal view returns (ebool) {
         // Make sure that: (0 <= vote <= options.length)
-        ebool isValid = encryptedVote.gte(_encOptions[0]).and(encryptedVote.lte(_encOptions[options.length - 1]));
-        FHE.req(isValid);
+        return encryptedVote.lte(FHE.asEuint8(MAX_OPTIONS - 1));
+        //FHE.req(isValid);
     }
 
-    function _addToTally(euint8 option /* , euint16 amount */) internal {
+    function _addToTally(euint8 option, ebool voteValid /* , euint16 amount */) internal {
         // We don't want to leak the user's vote, so we have to change the tally of every option.
         // So for example, if the user voted for option 1:
         // tally[0] = tally[0] + enc(0)
@@ -80,7 +81,7 @@ contract Voting is Permissioned {
         // etc ..
         for (uint8 i = 0; i < options.length; i++) {
             // euint16 amountOrZero = FHE.select(option.eq(_encOptions[i]), _one, _zero);
-            ebool amountOrZero = option.eq(_encOptions[i]); // `eq()` result is known to be enc(0) or enc(1)
+            ebool amountOrZero = option.eq(_encOptions[i]).and(voteValid); // `eq()` result is known to be enc(0) or enc(1)
             _tally[i] = _tally[i] + amountOrZero.toU16(); // `eq()` result is known to be enc(0) or enc(1)
         }
     }

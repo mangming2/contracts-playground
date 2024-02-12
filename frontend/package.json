@@ -4,7 +4,8 @@
   "private": true,
   "dependencies": {
     "bootstrap": "^4.4.1",
-    "ethers": "^5.4.7",
+    "ethers": "^6.11.0",
+    "fhenixjs": "^0.1.0-beta.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
@@ -12,6 +13,7 @@
     "react-scripts": "5.0.1"
   },
   "scripts": {
+    "updateContracts": "cp ../artifacts/contracts/ExampleToken.sol/ExampleToken.json src/contracts/FHERC20.json && cp ../deployments/localfhenix/ExampleToken.json src/contracts/FHERC20_DEPLOY.json",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "eject": "react-scripts eject"

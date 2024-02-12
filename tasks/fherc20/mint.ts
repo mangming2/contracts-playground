@@ -1,6 +1,6 @@
 import { task } from "hardhat/config";
 import type { TaskArguments } from "hardhat/types";
-import { FHERC20 } from "../../typechain-types";
+import { ExampleToken } from "../../typechain-types";
 
 task("task:mint")
   .addParam("amount", "Amount to transfer (plaintext number)", "1")
@@ -14,22 +14,26 @@ task("task:mint")
 
     let destinationAddress = taskArguments?.to || signerAddress;
 
-    const Counter = await deployments.get("FHERC20");
+    const Counter = await deployments.get("ExampleToken");
 
     console.log(
       `Running addCount(${amountToAdd}), targeting contract at: ${Counter.address}`,
     );
+    console.log(`
+      Running with account ${signerAddress}
+    `)
 
-    const contract = await ethers.getContractAt("FHERC20", Counter.address);
+    const contract = await ethers.getContractAt("ExampleToken", Counter.address);
 
-    const encyrptedAmount = await fhenixjs.encrypt_uint32(amountToAdd);
+    const encryptedAmount = await fhenixjs.encrypt_uint32(amountToAdd);
 
-    let contractWithSigner = contract.connect(signer) as unknown as FHERC20;
+    let contractWithSigner = contract.connect(signer) as unknown as ExampleToken;
 
     try {
-      await contractWithSigner.mintEncrypted(encyrptedAmount);
+      await contractWithSigner.mintEncrypted(destinationAddress, encryptedAmount);
     } catch (e) {
-      console.log(`transfer balance: ${e}`);
+      console.log(`mint failed: ${e}`);
       return;
     }
+    console.log(`Done mint`);
   });

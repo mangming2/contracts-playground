@@ -17,7 +17,11 @@ task("task:vote")
 
         console.log(`contract at: ${Voting.address}, for signer: ${signer.address}`);
 
-        await fhenixjs.getFunds(signer.address);
+        if (hre.network.name === "localfhenix") {
+            if (await signer.getBalance() < ethers.utils.parseEther("1.0")) {
+               await fhenixjs.getFunds(signer.address);
+            }
+        }
 
         const eOption = await fhenixjs.encrypt_uint8(Number(taskArguments.option));
         let contractWithSigner = voting.connect(signer) as unknown as Voting;

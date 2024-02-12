@@ -3,7 +3,7 @@
 pragma solidity >=0.8.13 <0.9.0;
 
 import { inEuint32, euint32, FHE } from "@fhenixprotocol/contracts/FHE.sol";
-import { FHERC20 } from "./fherc20.sol";
+import { IFHERC20 } from "./IFHERC20.sol";
 import "./ConfAddress.sol";
 
 struct HistoryEntry {
@@ -20,7 +20,7 @@ contract Auction {
     Eaddress internal highestBidder;
     euint32 internal eMaxEuint32;
     uint256 public auctionEndTime;
-    FHERC20 internal _wfhenix;
+    IFHERC20 internal _wfhenix;
 
     // When auction is ended this will contain the PLAINTEXT winner address
     address public winnerAddress;
@@ -28,7 +28,7 @@ contract Auction {
     event AuctionEnded(address winner, uint32 bid);
 
     constructor(address wfhenix, uint256 biddingTime) payable {
-        _wfhenix = FHERC20(wfhenix);
+        _wfhenix = IFHERC20(wfhenix);
         auctioneer = payable(msg.sender);
         auctionEndTime = block.timestamp + biddingTime;
         CONST_0_ENCRYPTED = FHE.asEuint32(0);

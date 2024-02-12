@@ -29,7 +29,7 @@ task("task:transfer")
       console.time("transferEncryptedDuration");
 
       try {
-          await contractWithSigner.transferEncrypted(destinationAddress, encryptedAmount);
+          await contractWithSigner["transferEncrypted(address,(bytes))"](destinationAddress, encryptedAmount);
       } catch (e) {
           console.log(`failed to transfer balance: ${e}`);
           console.timeEnd("failed transferEncryptedDuration");

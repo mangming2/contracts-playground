@@ -2,7 +2,7 @@ import { task } from "hardhat/config";
 import type { TaskArguments } from "hardhat/types";
 
 task("task:fin")
-    .addParam("account", "Specify which account [0, 9]")
+    .addOptionalParam("account", "Specify which account [0, 9]", "0")
     .setAction(async function (taskArguments: TaskArguments, hre) {
         const { ethers, deployments } = hre;
 

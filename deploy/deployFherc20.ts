@@ -11,9 +11,12 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       await fhenixjs.getFunds(signer.address);
     }
   }
-  const counter = await deploy("FHERC20", {
+
+  let encryptedBalance = await fhenixjs.encrypt(100);
+
+  const counter = await deploy("ExampleToken", {
     from: signer.address,
-    args: ["token", "FHE"],
+    args: ["Test Token", "FHE", 1000, encryptedBalance],
     log: true,
     skipIfAlreadyDeployed: true,
   });

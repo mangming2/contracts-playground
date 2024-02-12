@@ -11,6 +11,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
             await fhenixjs.getFunds(signer.address);
         }
     }
+
     const token = await deploy("FHERC20", {
         from: signer.address,
         args: ["token", "FHE"],
