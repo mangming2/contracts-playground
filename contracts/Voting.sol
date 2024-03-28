@@ -17,7 +17,7 @@ contract Voting is Permissioned {
     string public proposal;
     string[] public options;
     uint public voteEndTime;
-    euint16[MAX_OPTIONS] internal _tally; // Since every vote is worth 1, I assume we can use a 16-bit integer
+    euint16[MAX_OPTIONS] internal _tally = [FHE.asEuint16(0),FHE.asEuint16(0),FHE.asEuint16(0),FHE.asEuint16(0)]; // Since every vote is worth 1, I assume we can use a 16-bit integer
 
     euint8 internal _winningOption;
     euint16 internal _winningTally;
