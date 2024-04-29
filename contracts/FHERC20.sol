@@ -94,13 +94,13 @@ contract FHERC20 is IFHERC20, ERC20, Permissioned {
         _mint(msg.sender, FHE.decrypt(amountToUnwrap));
     }
 
-//    function mint(uint256 amount) public {
-//        _mint(msg.sender, amount);
-//    }
+    function mint(uint256 amount) public {
+        _mint(msg.sender, amount);
+    }
 
-    function _mintEncrypted(address to, inEuint32 memory encryptedAmount) internal {
+    function mintEncrypted(inEuint32 calldata encryptedAmount) public {
         euint32 amount = FHE.asEuint32(encryptedAmount);
-        _encBalances[to] = _encBalances[to] + amount;
+        _encBalances[msg.sender] = _encBalances[msg.sender] + amount;
         totalEncryptedSupply = totalEncryptedSupply + amount;
     }
 
@@ -128,7 +128,7 @@ contract FHERC20 is IFHERC20, ERC20, Permissioned {
     function balanceOfEncrypted(
         address account, Permission memory auth
     ) virtual public view onlyPermitted(auth, account) returns (bytes memory) {
-        return _encBalances[account].seal(auth.publicKey);
+        return _encBalances[msg.sender].seal(auth.publicKey);
     }
 
     //    // Returns the total supply of tokens, sealed and encrypted for the caller.
